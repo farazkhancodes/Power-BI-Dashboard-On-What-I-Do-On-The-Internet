@@ -1,0 +1,48 @@
+
+def cap(x):
+    s=x[0].upper()
+    return s+x[1:]
+
+import re
+def site_name(x):
+    val=re.search('\.',x)
+    if(val==None):
+        return 'NA'
+    (ans,no)=val.span()
+    x=x[ans+1:]
+    cal=re.search('\.',x)
+    if(cal==None):
+        return 'NA'
+    (ans,no)=cal.span()
+    x=x[:ans]
+    return cap(x)
+
+def site_name_slash(x):
+    val=re.search('/',x)
+    if(val==None):
+        return 'NA'
+    (ans,no)=val.span()
+    x=x[ans+2:]
+    cal=re.search('\.',x)
+    if(cal==None):
+        return 'NA'
+    (ans,no)=cal.span()
+    x=x[:ans]
+    return cap(x)
+
+Website=dataset.url.apply(lambda x:site_name(x))
+common_ext=Website.str.contains('Com/')
+Website[common_ext]='NA'
+common_ext=Website.str.contains('Net/')
+Website[common_ext]='NA'
+common_ext=Website.str.contains('Org/')
+Website[common_ext]='NA'
+common_ext=Website.str.contains('Us/')
+Website[common_ext]='NA'
+common_ext=Website.str.contains('In/')
+Website[common_ext]='NA'
+common_ext=Website.str.contains('Co/')
+Website[common_ext]='NA'
+filter=Website.str.contains('NA')
+Website[filter]=dataset[filter].url.apply(lambda x:site_name_slash(x))
+dataset['Website']=Website
